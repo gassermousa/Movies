@@ -69,7 +69,8 @@ class UpComingMovies extends StatelessWidget {
                                   MovieDetailsScreen(
                                     movieId: movies[index].id!,
                                   ));
-
+                              MoviedetaileCubitCubit.get(context)
+                                  .getMoviesID(movies[index].id!);
                               MoviedetaileCubitCubit.get(context)
                                   .getMoviesDetailes(movies[index].id!);
                             } else {

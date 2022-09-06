@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movies_/app_cubits/2knights_cubits/cubits.dart';
 import 'package:movies_/app_cubits/2knights_cubits/states.dart';
+import 'package:movies_/presentation/components/widgets/search.dart';
 
 class LayoutScreen extends StatelessWidget {
   const LayoutScreen({Key? key}) : super(key: key);
@@ -20,10 +21,10 @@ class LayoutScreen extends StatelessWidget {
             actions: [
               IconButton(
                   onPressed: () {
-                    cubit.changeMode();
+                    showSearch(context: context, delegate: Search());
                   },
                   icon: Icon(
-                    Icons.dark_mode_outlined,
+                    Icons.search,
                     color: Theme.of(context).iconTheme.color!.withOpacity(0.7),
                   )),
             ],

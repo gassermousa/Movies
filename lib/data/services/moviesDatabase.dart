@@ -38,4 +38,10 @@ class MoviesDatabase {
   Future getMoviesID() {
     return database!.rawQuery('SELECT movieID FROM Movies');
   }
+
+  void deleteMovie({
+    required int id,
+  }) {
+    database!.rawDelete('DELETE FROM Movies WHERE movieID = ?', [id]);
+  }
 }

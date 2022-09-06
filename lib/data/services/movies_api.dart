@@ -146,4 +146,22 @@ class ApiSrevices {
       return [];
     }
   }
+
+  Future<List<dynamic>> getMovieByName(String name) async {
+    var params = {
+      "api_key": apiKey,
+      "language": "en-US",
+      "query": name,
+      "page": 1,
+      'include_adult': false,
+    };
+    try {
+      Response response =
+          await DioHelper.getdata(url: 'search/movie', query: params);
+      return response.data['results'];
+    } catch (e) {
+      print(e.toString());
+      return [];
+    }
+  }
 }

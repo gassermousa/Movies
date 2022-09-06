@@ -74,3 +74,11 @@ class GetMoviesDatabaseSuccess extends AppStates {
 
   GetMoviesDatabaseSuccess(this.movies);
 }
+
+class DeleteMovieSuccess extends AppStates {}
+
+class GetMovieByNameSuccesState extends AppStates {
+  final List<Movie> movies;
+
+  GetMovieByNameSuccesState(this.movies);
+}

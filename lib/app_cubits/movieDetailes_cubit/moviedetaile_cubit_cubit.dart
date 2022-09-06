@@ -60,7 +60,6 @@ class MoviedetaileCubitCubit extends Cubit<MoviedetaileCubitState> {
   List<Map> moviesID = [];
   void getMoviesID(int m) {
     isWatchlist = false;
-
     moviesID = [];
     movieRepository.getMoviesID().then((value) {
       value.forEach((element) {

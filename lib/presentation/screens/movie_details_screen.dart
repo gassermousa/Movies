@@ -5,6 +5,7 @@ import 'package:movies_/app_cubits/2knights_cubits/states.dart';
 import 'package:movies_/app_cubits/movieDetailes_cubit/moviedetaile_cubit_cubit.dart';
 import 'package:movies_/data/model/movie_details_model.dart';
 import 'package:movies_/data/model/movie_model.dart';
+import 'package:movies_/presentation/components/colors.dart';
 import 'package:movies_/presentation/components/widgets/cast_list.dart';
 import 'package:movies_/presentation/components/widgets/movie_item.dart';
 import 'package:shimmer/shimmer.dart';
@@ -21,15 +22,16 @@ class MovieDetailsScreen extends StatelessWidget {
   List<Movie>? movies;
   @override
   Widget build(BuildContext context) {
+    var myCenter = MediaQuery.of(context).size.height / 2;
     return Scaffold(
       body: SingleChildScrollView(
         child: BlocBuilder<MoviedetaileCubitCubit, MoviedetaileCubitState>(
           builder: (context, state) {
             int indexScreen = AppCubit.get(context).currentIndex;
-            if (MoviedetaileCubitCubit.get(context).moviesDetailes != null &&
-                MoviedetaileCubitCubit.get(context).castMovie.isNotEmpty) {
+            if (MoviedetaileCubitCubit.get(context).moviesDetailes != null) {
               movie = MoviedetaileCubitCubit.get(context).moviesDetailes;
               movies = MoviedetaileCubitCubit.get(context).similarMovies;
+              print(movie!.id);
               return Column(
                 children: <Widget>[
                   SizedBox(
@@ -50,10 +52,12 @@ class MovieDetailsScreen extends StatelessWidget {
                             ),
                             AspectRatio(
                                 aspectRatio: 3 / 2.sp,
-                                child: FadeInImage.memoryNetwork(
-                                    fit: BoxFit.cover,
-                                    placeholder: kTransparentImage,
-                                    image: movie!.backPoster)),
+                                child: movie!.backPoster == null
+                                    ? Image.asset('assets/image/film.png')
+                                    : FadeInImage.memoryNetwork(
+                                        fit: BoxFit.cover,
+                                        placeholder: kTransparentImage,
+                                        image: movie!.backPoster)),
                           ],
                         ),
                         AspectRatio(
@@ -150,31 +154,80 @@ class MovieDetailsScreen extends StatelessWidget {
                                             ),
                                           ],
                                         ),
+                                        SizedBox(
+                                          height: 4.0.h,
+                                        ),
+                                        Row(
+                                          children: [
+                                            AutoSizeText(
+                                              movie!.rating
+                                                  .toStringAsPrecision(2)
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1!
+                                                      .copyWith(
+                                                          fontSize: 15.0.sp,
+                                                          fontWeight:
+                                                              FontWeight.bold)
+                                                      .fontSize),
+                                            ),
+                                            SizedBox(
+                                              width: 5.0.w,
+                                            ),
+                                            Icon(
+                                              Icons.star,
+                                              color: ratingColor,
+                                              size: 20.0,
+                                            ),
+                                          ],
+                                        )
                                       ],
                                     ),
                                   ),
                                   BlocBuilder<AppCubit, AppStates>(
                                     builder: (context, state) {
-                                      return IconButton(
-                                          onPressed: () {
-                                            AppCubit.get(context)
-                                                .insertToDatabase(
-                                                    movieID: movie!.id,
-                                                    title: movie!.title,
-                                                    poster: movie!.poster,
-                                                    rating: movie!.rating
-                                                        .toString());
-                                            MoviedetaileCubitCubit.get(context)
-                                                .changeWatchList();
-                                          },
-                                          icon: Icon(
-                                            Icons.favorite_border,
-                                            color: MoviedetaileCubitCubit.get(
-                                                        context)
-                                                    .isWatchlist
-                                                ? Colors.red
-                                                : Colors.white,
-                                          ));
+                                      return Expanded(
+                                        child: Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                              0, 0, 10.0.sp, 0),
+                                          child: IconButton(
+                                              onPressed: () {
+                                                if (MoviedetaileCubitCubit.get(
+                                                            context)
+                                                        .isWatchlist ==
+                                                    false) {
+                                                  AppCubit.get(context)
+                                                      .insertToDatabase(
+                                                          movieID: movie!.id,
+                                                          title: movie!.title,
+                                                          poster: movie!.poster,
+                                                          rating: movie!.rating
+                                                              .toString());
+                                                  MoviedetaileCubitCubit.get(
+                                                          context)
+                                                      .changeWatchList();
+                                                } else {
+                                                  AppCubit.get(context)
+                                                      .deleteMovie(movie!.id);
+                                                  MoviedetaileCubitCubit.get(
+                                                          context)
+                                                      .changeWatchList();
+                                                }
+                                              },
+                                              icon: Icon(
+                                                Icons.favorite_border,
+                                                color:
+                                                    MoviedetaileCubitCubit.get(
+                                                                context)
+                                                            .isWatchlist
+                                                        ? Colors.red
+                                                        : Colors.white,
+                                              )),
+                                        ),
+                                      );
                                     },
                                   )
                                 ],
@@ -218,7 +271,7 @@ class MovieDetailsScreen extends StatelessWidget {
                             SizedBox(
                               width: 5.0.w,
                             ),
-                            Text(
+                            AutoSizeText(
                               getDuration(movie!.runtime),
                               style: TextStyle(
                                   fontSize: 14.0.sp,
@@ -227,43 +280,48 @@ class MovieDetailsScreen extends StatelessWidget {
                             SizedBox(
                               width: 10.0.w,
                             ),
-                            Expanded(
-                              child: Container(
-                                height: 40.0.h,
-                                padding: EdgeInsets.only(right: 10.0.w),
-                                child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: MoviedetaileCubitCubit.get(context)
-                                      .moviesDetailes!
-                                      .genres
-                                      .length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: EdgeInsets.only(right: 5.0.w),
-                                      child: Center(
-                                        child: Container(
-                                          padding: EdgeInsets.all(8.0.sp),
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(30.0.sp)),
-                                              color: Colors.white
-                                                  .withOpacity(0.1)),
-                                          child: AutoSizeText(
-                                            movie!.genres[index].name!,
-                                            maxLines: 2,
-                                            style: TextStyle(
-                                              height: 1.4.h,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
+                            if (MoviedetaileCubitCubit.get(context)
+                                .moviesDetailes!
+                                .genres
+                                .isNotEmpty)
+                              Expanded(
+                                child: Container(
+                                  height: 40.0.h,
+                                  padding: EdgeInsets.only(right: 10.0.w),
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount:
+                                        MoviedetaileCubitCubit.get(context)
+                                            .moviesDetailes!
+                                            .genres
+                                            .length,
+                                    itemBuilder: (context, index) {
+                                      return Padding(
+                                        padding: EdgeInsets.only(right: 5.0.w),
+                                        child: Center(
+                                          child: Container(
+                                            padding: EdgeInsets.all(8.0.sp),
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(30.0.sp)),
+                                                color: Colors.white
+                                                    .withOpacity(0.1)),
+                                            child: AutoSizeText(
+                                              movie!.genres[index].name!,
+                                              maxLines: 2,
+                                              style: TextStyle(
+                                                height: 1.4.h,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  },
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                         SizedBox(
@@ -288,67 +346,73 @@ class MovieDetailsScreen extends StatelessWidget {
                   const SizedBox(
                     height: 10.0,
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(10.0),
-                    decoration:
-                        BoxDecoration(color: Colors.white.withOpacity(0.05)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("CASTS",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14.0,
-                                color: Colors.white.withOpacity(0.5))),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        CastList(
-                          casts: MoviedetaileCubitCubit.get(context).castMovie,
-                        )
-                      ],
+                  if (MoviedetaileCubitCubit.get(context).castMovie.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(10.0),
+                      decoration:
+                          BoxDecoration(color: Colors.white.withOpacity(0.05)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AutoSizeText("CASTS",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.0,
+                                  color: Colors.white.withOpacity(0.5))),
+                          const SizedBox(
+                            height: 10.0,
+                          ),
+                          CastList(
+                            casts:
+                                MoviedetaileCubitCubit.get(context).castMovie,
+                          )
+                        ],
+                      ),
                     ),
-                  ),
                   SizedBox(
                     height: 20.0.h,
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(10.0),
-                    decoration:
-                        BoxDecoration(color: Colors.white.withOpacity(0.05)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AutoSizeText("Similar Movies",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14.0.sp,
-                                color: Colors.white.withOpacity(0.5))),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        SizedBox(
-                          height: 240.h,
-                          child: ListView.separated(
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) {
-                                return buildMovieItem(
-                                    movies![index], context, indexScreen);
-                              },
-                              separatorBuilder: (context, index) {
-                                return SizedBox(
-                                  width: 10.0.w,
-                                );
-                              },
-                              itemCount: movies!.length),
-                        ),
-                      ],
+                  if (movies!.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(10.0),
+                      decoration:
+                          BoxDecoration(color: Colors.white.withOpacity(0.05)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AutoSizeText("Similar Movies",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.0.sp,
+                                  color: Colors.white.withOpacity(0.5))),
+                          const SizedBox(
+                            height: 10.0,
+                          ),
+                          SizedBox(
+                            height: 240.h,
+                            child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  return buildMovieItem(
+                                      movies![index], context, indexScreen);
+                                },
+                                separatorBuilder: (context, index) {
+                                  return SizedBox(
+                                    width: 10.0.w,
+                                  );
+                                },
+                                itemCount: movies!.length),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
                 ],
               );
             } else {
-              return SizedBox();
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: myCenter),
+                child: Center(child: CircularProgressIndicator()),
+              );
             }
           },
         ),

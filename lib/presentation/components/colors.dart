@@ -7,3 +7,4 @@ const warningToast = Colors.yellow;
 const wrongToast = Colors.red;
 
 const darkModeColor = Color(0xFF151C26);
+final ratingColor = Colors.yellow[700];

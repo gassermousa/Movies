@@ -212,4 +212,23 @@ class AppCubit extends Cubit<AppStates> {
       emit(GetMoviesDatabaseSuccess(movies));
     });
   }
+
+  void deleteMovie(int id) {
+    movieRepository.deleteMovie(id);
+    getMoviesWatchLater();
+    emit(DeleteMovieSuccess());
+  }
+
+  late List<Movie> moviesByName = [];
+  List<Movie> getMoviesByName(String name) {
+    print('object');
+    movieRepository.getMoviesByName(name).then((value) {
+      emit(GetMovieByNameSuccesState(value));
+      moviesByName = value;
+    });
+    return moviesByGenre;
+  }
+
+  int oldquery = 0;
+  var movieID;
 }

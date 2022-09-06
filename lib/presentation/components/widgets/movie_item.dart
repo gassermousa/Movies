@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:movies_/app_cubits/2knights_cubits/cubits.dart';
 import 'package:movies_/app_cubits/movieDetailes_cubit/moviedetaile_cubit_cubit.dart';
 import 'package:movies_/data/model/movie_model.dart';
+import 'package:movies_/presentation/components/colors.dart';
 import 'package:movies_/presentation/components/navigator.dart';
 import 'package:movies_/presentation/screens/movie_details_screen.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -67,11 +68,13 @@ Widget buildMovieItem(Movie movie, context, index, {int? value}) => Column(
                         aspectRatio: 2 / 3.sp,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(5.0.r),
-                          child: FadeInImage.memoryNetwork(
-                              fit: BoxFit.cover,
-                              placeholder: kTransparentImage,
-                              image: 'https://image.tmdb.org/t/p/w300' +
-                                  movie.poster!),
+                          child: movie.poster == null
+                              ? Image.asset('assets/image/film.png')
+                              : FadeInImage.memoryNetwork(
+                                  fit: BoxFit.cover,
+                                  placeholder: kTransparentImage,
+                                  image: 'https://image.tmdb.org/t/p/w300' +
+                                      movie.poster!),
                         )),
                   ),
                 ],
@@ -124,15 +127,8 @@ Widget buildMovieItem(Movie movie, context, index, {int? value}) => Column(
                     ),
                     Icon(
                       Icons.star,
-                      color: Colors.yellow[700],
+                      color: ratingColor,
                     ),
-                    SizedBox(
-                      width: 20.w,
-                    ),
-                    // Icon(
-                    //   EvaIcons.heartOutline,
-                    //   color: Colors.red,
-                    // )
                   ],
                 ),
               )

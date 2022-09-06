@@ -72,4 +72,13 @@ class MovieRepository {
   Future getMoviesID() {
     return moviesDatabase.getMoviesID();
   }
+
+  void deleteMovie(int id) {
+    moviesDatabase.deleteMovie(id: id);
+  }
+
+  Future<List<Movie>> getMoviesByName(String name) async {
+    final movies = await apiSrevices.getMovieByName(name);
+    return movies.map((movie) => Movie.fromJson(movie)).toList();
+  }
 }
