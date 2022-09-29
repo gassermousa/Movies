@@ -94,6 +94,8 @@ class CastList extends StatelessWidget {
                                   width: 80.0.w,
                                   child: AutoSizeText(
                                     casts![index].name!,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                     style: TextStyle(fontSize: 10.0.sp),
                                   ),
                                 ))

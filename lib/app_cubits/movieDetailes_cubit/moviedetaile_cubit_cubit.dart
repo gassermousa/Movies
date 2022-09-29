@@ -65,22 +65,12 @@ class MoviedetaileCubitCubit extends Cubit<MoviedetaileCubitState> {
       value.forEach((element) {
         moviesID.add(element);
       });
-      print('object' + moviesID.length.toString());
       for (int i = 0; i <= moviesID.length; i++) {
         if (moviesID[i].containsValue(m)) {
           isWatchlist = true;
-          print('isWatchedList');
         }
       }
       emit(GetMoviesIdDatabaseSuccess());
     });
   }
-
-  // void checkmovieindatabase(int movieId, List<Map> moviesIDs) {
-  //   print('cheeeeeeeeeeeck');
-  //   print(moviesIDs.length.toString() + 'hhhhhhhhhhh');
-  //   if (moviesIDs.contains(movieId)) {
-
-  //   }
-  // }
 }

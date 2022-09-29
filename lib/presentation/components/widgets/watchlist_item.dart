@@ -47,7 +47,20 @@ class WatchListItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(name),
+                  Text(
+                    name,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                    style: TextStyle(
+                        height: 1.0.h,
+                        color: Colors.white,
+                        fontSize: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(
+                                fontSize: 16.0.sp, fontWeight: FontWeight.bold)
+                            .fontSize),
+                  ),
                   SizedBox(
                     height: 10.h,
                   ),

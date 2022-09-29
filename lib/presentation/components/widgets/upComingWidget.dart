@@ -131,7 +131,7 @@ class StackShimmer extends StatelessWidget {
               )),
         ),
         Container(
-          width: MediaQuery.of(context).size.width.h,
+          width: MediaQuery.of(context).size.width,
           height: 700.h,
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,

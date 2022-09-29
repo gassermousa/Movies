@@ -51,14 +51,64 @@ class Search extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var fruit in searchTerms) {
-      if (fruit.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(fruit);
-      }
-    }
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 15.sp, 0, 0),
+      child: ListView.separated(
+        separatorBuilder: (context, index) {
+          return SizedBox(
+            height: 15.h,
+          );
+        },
+        itemCount: AppCubit.get(context).moviesByName.length,
+        itemBuilder: (context, index) {
+          var result = AppCubit.get(context).moviesByName[index];
+          return ListTile(
+            onTap: () {
+              query = result.title!;
+              showResults(context);
+              MoviedetaileCubitCubit.get(context)
+                  .getMoviesID(AppCubit.get(context).moviesByName[index].id!);
+              MoviedetaileCubitCubit.get(context).moviesDetailes = null;
+              MoviedetaileCubitCubit.get(context).castMovie = [];
 
-    return SizedBox();
+              AppCubit.get(context).getSimilarMoviesSelectedItem1(
+                  AppCubit.get(context).moviesByName[index].id!);
+              AppCubit.get(context).getSimilarMoviesSelectedItem2(
+                  AppCubit.get(context).moviesByName[index].id!);
+              AppCubit.get(context).movieID =
+                  AppCubit.get(context).moviesByName[index].id!;
+              navigateTo(
+                  context,
+                  MovieDetailsScreen(
+                    movieId: AppCubit.get(context).moviesByName[index].id!,
+                  ));
+              query = '';
+              MoviedetaileCubitCubit.get(context).getMoviesDetailes(
+                AppCubit.get(context).moviesByName[index].id!,
+              );
+            },
+            title: AutoSizeText(
+              result.title!,
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(5.0.r),
+              child: AspectRatio(
+                aspectRatio: 2 / 3.sp,
+                child: AppCubit.get(context).moviesByName[index].poster == null
+                    ? Image.asset('assets/image/film.png')
+                    : FadeInImage.memoryNetwork(
+                        fit: BoxFit.cover,
+                        placeholder: kTransparentImage,
+                        image: 'https://image.tmdb.org/t/p/w300' +
+                            AppCubit.get(context).moviesByName[index].poster!,
+                        height: 180.0.h),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override

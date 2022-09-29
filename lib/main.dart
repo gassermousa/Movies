@@ -1,6 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors, must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:movies_/app_cubits/2knights_cubits/cubits.dart';
 import 'package:movies_/app_cubits/2knights_cubits/states.dart';
@@ -17,7 +18,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:movies_/presentation/Theme/themes.dart';
 import 'package:movies_/data/constant/constant.dart';
 import 'package:movies_/presentation/screens/Layout.dart';
-
+import 'package:connection_notifier/connection_notifier.dart';
+import 'package:movies_/presentation/screens/connection_screen.dart';
+import 'package:movies_/presentation/screens/splash_screen.dart';
 import 'app_cubits/movieDetailes_cubit/moviedetaile_cubit_cubit.dart';
 
 void main() async {
@@ -37,6 +40,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -61,15 +68,22 @@ class MyApp extends StatelessWidget {
           return ScreenUtilInit(
             designSize: const Size(392.7, 759.3),
             builder: (context, chidl) {
-              return MaterialApp(
+              return ConnectionNotifier(
+                  child: MaterialApp(
                 debugShowCheckedModeBanner: false,
                 theme: LightTheme,
                 darkTheme: darkTheme,
-                themeMode: AppCubit.get(context).isDark
-                    ? ThemeMode.dark
-                    : ThemeMode.light,
-                home: LayoutScreen(),
-              );
+                themeMode: ThemeMode.dark,
+                home: ConnectionNotifierToggler(
+                  onConnectionStatusChanged: (connected) {
+                    if (connected == false) {
+                      AppCubit.get(context).callFunctions();
+                    }
+                  },
+                  connected: SplashScreen(),
+                  disconnected: ConnectionScreen(),
+                ),
+              ));
             },
           );
         },

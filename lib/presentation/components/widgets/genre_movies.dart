@@ -57,8 +57,6 @@ class GenreMovies extends StatelessWidget {
                               AppCubit.get(context)
                                   .getMoviesByGenre(genres[index].id!);
                               scrollLeft(_controller);
-                              print(index.toString() + 'egypt');
-                              print(AppCubit.get(context).generes[index].id);
                             }
                           },
                           selected: AppCubit.get(context).selected == index),
@@ -79,18 +77,18 @@ class GenreMovies extends StatelessWidget {
                           physics: BouncingScrollPhysics(),
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, index) {
-                            if (check == 0) {
-                              AppCubit.get(context)
-                                  .getMoviesByGenre(genres[0].id!);
+                            if (AppCubit.get(context).selected == 0 &&
+                                check == 0) {
+                              for (int i = 0; i == 1; i++) {
+                                AppCubit.get(context)
+                                    .getMoviesByGenre(genres[0].id!);
+                              }
 
                               return buildMovieItem(
                                   AppCubit.get(context).moviesByGenre[index],
                                   context,
                                   indexScreen);
                             } else {
-                              print(
-                                  AppCubit.get(context).moviesByGenre[0].title);
-                              print(check.toString() + '  Not lol');
                               return buildMovieItem(
                                   AppCubit.get(context).moviesByGenre[index],
                                   context,

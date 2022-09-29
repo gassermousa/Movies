@@ -19,7 +19,7 @@ class AppCubit extends Cubit<AppStates> {
 
   List<Widget> screens = [HomeScreen(), KnightScreen(), WatchListScreen()];
 
-  List<String> titles = ['Home', '2Knight', 'WatchList'];
+  List<String> titles = ['Home', 'GMovies', 'WatchList'];
 
   void changeBottomNav(int index, context) {
     print('lol' + index.toString());
@@ -107,7 +107,9 @@ class AppCubit extends Cubit<AppStates> {
   }
 
   late List<Movie> moviesByGenre = [];
+  bool isGenere = false;
   List<Movie> getMoviesByGenre(int id) {
+    isGenere = true;
     print('object');
     movieRepository.getMoviesByGener(id).then((value) {
       emit(GetGenerMoviesSuccesState(value));
@@ -223,12 +225,27 @@ class AppCubit extends Cubit<AppStates> {
   List<Movie> getMoviesByName(String name) {
     print('object');
     movieRepository.getMoviesByName(name).then((value) {
+      for (var m in value) {
+        if (m.poster!.isNotEmpty ||
+            m.backPoster!.isNotEmpty ||
+            m.overview!.isNotEmpty) {
+          moviesByName = value;
+        }
+      }
       emit(GetMovieByNameSuccesState(value));
-      moviesByName = value;
     });
     return moviesByGenre;
   }
 
   int oldquery = 0;
   var movieID;
+
+  void callFunctions() {
+    getNowPlayingMovies();
+    getUpComingMovies();
+    getTopRatedMovies();
+    getPopularMovies();
+    getAllGenres();
+    createDatabase();
+  }
 }

@@ -6,6 +6,7 @@ import 'package:movies_/presentation/components/navigator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movies_/presentation/components/widgets/watchlist_item.dart';
 import 'package:movies_/presentation/screens/movie_details_screen.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class WatchListScreen extends StatelessWidget {
   const WatchListScreen({Key? key}) : super(key: key);
@@ -63,7 +64,7 @@ class WatchListScreen extends StatelessWidget {
                 itemCount: AppCubit.get(context).movies.length),
           );
         } else {
-          return Center(child: CircularProgressIndicator());
+          return Center(child: AutoSizeText('No items'));
         }
       },
     ));
