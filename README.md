@@ -1,4 +1,4 @@
-# movies_
+# GMovies
 
 A new Flutter project.
 
